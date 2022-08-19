@@ -3,18 +3,28 @@ let overlay = document.getElementById('overlay');
 let close = document.getElementById('close');
  
 
-function ajax(){
+function ajax(url, callback){
     let request = new XMLHttpRequest();
-    request.open('GET', 'https://jsonplaceholder.typicode.com/posts');
+    request.open('GET', url);
     request.addEventListener('load', function(){
         let data = JSON.parse(request.responseText);
-        data.forEach(item => {
-            createpost(item);
-        });
+        callback(data);
+        
         
     });
 
     request.send();
+}
+
+ajax("https://jsonplaceholder.typicode.com/posts", function(data){
+    printdata(data);
+});
+
+function printdata (data){
+    data.forEach(item => {
+        createpost(item);
+    });
+
 }
 
 function createpost(item){
@@ -30,6 +40,7 @@ function createpost(item){
     divwrapper.appendChild(h3tag);
     divwrapper.appendChild(h2tag);
     mainpostwrapper.appendChild(divwrapper);
+    
 
     divwrapper.addEventListener('click', function(event){
         let id = event.target.getAttribute('data-id');
@@ -43,8 +54,11 @@ function createpost(item){
 function openOverlay(id){
 
     overlay.classList.add('active');
-    console.log(id);
-   
+    let url = `https://jsonplaceholder.typicode.com/posts/${id}`;
+    
+    ajax(url, function(data){
+        console.log(data);
+    });   
 
 }
 
@@ -52,7 +66,7 @@ close.addEventListener('click', function(){
     overlay.classList.remove('active');
 });
 
-ajax();
+
 
 
 
